@@ -70,6 +70,8 @@
 					"source/bitmaps/libtiff/tiffcompat.h",
 					"source/bitmaps/libtiff/tiffio.h",
 					"source/bitmaps/libtiff/tiffioP.h",
+					"source/cseries/cseries.h",
+					"source/cseries/cseries_windows.h",
 					"source/hs/hs_library_internal_compile.h",
 					"source/hs/hs_library_internal_runtime.h",
 					"source/math/real_math.h",
