@@ -1,25 +1,29 @@
 /*
 TAG_FILES.C
-
-symbols in this file:
-0018A920 0050:
-	_tag_name_strip_path (0000)
-002A2590 0025:
-	??_C@_0CF@HPPLDJIF@c?3?2halo?2SOURCE?2tag_files?2tag_fil@ (0000)
 */
 
 /* ---------- headers */
 
-/* ---------- constants */
-
-/* ---------- macros */
-
-/* ---------- structures */
-
-/* ---------- prototypes */
-
-/* ---------- globals */
+#include "cseries.h"
+#include "tag_files.h"
 
 /* ---------- public code */
 
-/* ---------- private code */
+const char *tag_name_strip_path(
+	char const *name)
+{
+	const char *stripped;
+
+	match_assert("c:\\halo\\SOURCE\\tag_files\\tag_files.c", 1374, name);
+
+	stripped= strrchr(name, '\\');
+
+	if (stripped!=NULL)
+	{
+		return stripped + 1;
+	}
+	else
+	{
+		return name;
+	}
+}

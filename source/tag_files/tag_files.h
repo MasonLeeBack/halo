@@ -18,6 +18,7 @@ header included in hcex build.
 
 void tag_files_open(void);
 void tag_files_close(void);
+const char *tag_name_strip_path(char const *name);
 
 /* ---------- globals */
 
