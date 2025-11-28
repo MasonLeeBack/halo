@@ -14,7 +14,18 @@ header included in hcex build.
 
 /* ---------- structures */
 
-/* ---------- prototypes/EXAMPLE.C */
+/* ---------- prototypes/CONSOLE.C */
+
+void console_initialize(void);
+void console_initialize_for_new_map(void);
+void console_open(void);
+void console_close(void);
+boolean console_is_active(void);
+void console_printf(boolean clear, const char *format, ...);
+void console_warning(const char *format, ...);
+void console_startup(void);
+void console_dispose(void);
+boolean console_update();
 
 /* ---------- globals */
 
