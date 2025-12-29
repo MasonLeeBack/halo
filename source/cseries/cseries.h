@@ -164,13 +164,13 @@ void debug_dump_memory(void);
 #define strcpy csstrcpy
 #define memcpy csmemcpy
 
-#define match_malloc(size, file, line) debug_malloc(size, FALSE, MATCH_FILE(file), MATCH_LINE(line))
-#define match_free(ptr, file, line) debug_free(ptr, MATCH_FILE(file), MATCH_LINE(line))
-#define match_realloc(ptr, size, file, line) debug_realloc(ptr, size, FALSE, MATCH_FILE(file), MATCH_LINE(line))
+#define match_malloc(file, line, size) debug_malloc(size, FALSE, MATCH_FILE(file), MATCH_LINE(line))
+#define match_free(file, line, ptr) debug_free(ptr, MATCH_FILE(file), MATCH_LINE(line))
+#define match_realloc(file, line, ptr, size) debug_realloc(ptr, size, FALSE, MATCH_FILE(file), MATCH_LINE(line))
 
-#define malloc(size) match_malloc(size, __FILE__, __LINE__)
-#define free(size) match_free(ptr, __FILE__, __LINE__)
-#define realloc(ptr, size) match_realloc(ptr, size, __FILE__, __LINE__)
+#define malloc(size) match_malloc(__FILE__, __LINE__, size)
+#define free(ptr) match_free(__FILE__, __LINE__, ptr)
+#define realloc(ptr, size) match_realloc(__FILE__, __LINE__, ptr, size)
 #endif
 
 #endif // __CSERIES_H
