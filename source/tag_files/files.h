@@ -21,7 +21,7 @@ enum
 	_permission_read_bit = 0,
 	_permission_write_bit,
 	_permission_append_bit,
-	NUMBER_OF_PERMISSION_FLAGS,
+	NUMBER_OF_PERMISSION_FLAGS
 };
 
 enum
@@ -39,43 +39,39 @@ enum
 {
 	FILE_REFERENCE_SIGNATURE= 'filo'
 };
-//
-//enum
-//{
-//	_has_filename_bit= 0,
-//
-//	NUMBER_OF_REFERENCE_INFO_FLAGS
-//};
-//
-//struct datastore
-//{
-//    datastore_entry entry[200]; // 0x0
-//};
-//static_assert(sizeof(datastore) == 102000, "Invalid datastore size");
-//
-//struct datastore_entry
-//{
-//    char name[255]; // 0x0
-//    char data[255]; // 0xFF
-//};
-//static_assert(sizeof(datastore_entry) == 510, "Invalid datastore_entry size");
-//
-//struct file_reference_info
-//{
-//    unsigned long signature; // 0x0
-//    unsigned short flags; // 0x4
-//    short location; // 0x6
-//    char path[256]; // 0x8
-//};
-//static_assert(sizeof(file_reference_info) == 264, "Invalid file_reference_info size");
-//
+
+enum
+{
+	_has_filename_bit= 0,
+
+	NUMBER_OF_REFERENCE_INFO_FLAGS
+};
+
+enum
+{
+	//NUMBER_OF_DATASTORE_ENTRIES
+	DATASTORE_MAX_DATA_SIZE= 255,
+	DATASTORE_MAX_FIELD_NAME_SIZE= 255
+};
+
+struct datastore_entry
+{
+	char name[DATASTORE_MAX_FIELD_NAME_SIZE];
+	char data[DATASTORE_MAX_DATA_SIZE];
+};
+
+struct datastore
+{
+	struct datastore_entry entry[200];
+};
+
 //enum
 //{
 //    _find_files_recursive_bit = 0,
 //    _find_files_enumerate_directories_bit,
 //    NUMBER_OF_FIND_FILES_FLAGS,
 //};
-//
+//windows version of the header below?
 //enum
 //{
 //    FIRST_DRIVE_LETTER = 65, // 0x0041 'A'
@@ -103,16 +99,26 @@ enum
 //    _WIN32_FIND_DATAA data; // 0x128
 //};
 //static_assert(sizeof(find_files_state) == 616, "Invalid find_files_state size");
-//
+
 struct file_reference_info
 {
-	unsigned long signature;
-	word flags;
-	short location;
-	char path[256];
+	unsigned long signature; // 0x0
+	unsigned short flags; // 0x4
+	short location; // 0x6
+	char path[256]; // 0x8
+#ifdef BUILDING_FILES_WINDOWS
 	void *file_handle;
+#endif
 };
-//static_assert(sizeof(file_reference_info) == 268, "Invalid file_reference_info size");
+
+enum
+{
+	_name_directory_bit= 0,
+	_name_parent_directory_bit,
+	_name_filename_bit,
+	_name_extension_bit,
+	NUMBER_OF_NAME_FLAGS,
+};
 
 /* ---------- macros */
 
@@ -139,19 +145,41 @@ struct file_reference_info *file_reference_get_info(struct file_reference *refer
 struct file_reference *file_reference_copy(struct file_reference *destination, const struct file_reference *source);
 struct file_reference *file_reference_add_directory(struct file_reference *reference, const char *directory);
 struct file_reference *file_reference_set_name(struct file_reference *reference, const char *name);
+short file_reference_get_location(const struct file_reference *reference);
+char *file_reference_get_name(const struct file_reference *reference, unsigned long flags, char *name);
 boolean file_references_equal(const struct file_reference *reference0, const struct file_reference *reference1);
-struct file_reference *file_reference_create_from_path(struct file_reference *reference, const char *path, boolean directory);
+struct file_reference *file_reference_create_from_path(struct file_reference *reference, const char *path, boolean is_directory);
 void directory_create_or_delete_contents(const char *directory_name);
 boolean datastore_read(const char *file_name, const char *field_name, long length, void *data);
 boolean datastore_write(const char *file_name, const char *field_name, long length, const void *data);
 
 /* ---------- prototypes/FILES_WINDOWS.C */
 
+// file_location_is_valid
+// file_compare_last_modification_dates
 void find_files_start(unsigned long flags, const struct file_reference *directory);
+void file_path_add_name(char *path, const char *name);
+void file_path_add_extension(char *path, const char *extension);
+void file_path_remove_name(char *path);
+void file_path_split(char *path, char **directory, char **parent_directory, char **filename, char **extension, boolean has_filename);
+void file_location_get_full_path(short location, const char *path, char *full_path);
+// file_read_only
+boolean file_create(struct file_reference *file);
+boolean file_delete(struct file_reference *file);
+boolean file_exists(const struct file_reference *file);
+// file_rename
 boolean file_open(struct file_reference *file, unsigned long flags);
 boolean file_close(struct file_reference *file);
+unsigned long file_get_position(const struct file_reference *file);
+boolean file_set_position(const struct file_reference *file, unsigned long position);
 unsigned long file_get_eof(const struct file_reference *file);
+boolean file_set_eof(const struct file_reference *file, unsigned long position);
 boolean file_read(const struct file_reference *file, unsigned long count, void *buffer);
+boolean file_write(const struct file_reference *file, unsigned long count, const void *buffer);
+// file_read_from_position
+// file_write_to_position
+// file_get_last_modification_date
+// file_get_size
 boolean find_files_next(struct file_reference *file, struct file_last_modification_date *date);
 
 /* ---------- globals */
